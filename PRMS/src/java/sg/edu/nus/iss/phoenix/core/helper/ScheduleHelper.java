@@ -37,6 +37,9 @@ public class ScheduleHelper {
 
         HashMap<Integer, Integer> strtDurMap
                 = getStrtEndTime(result, id);
+        
+        Range<Integer> durRange = Range.between(strtTime,
+                       endTime);
 
         if (null != strtDurMap
                 && strtDurMap.size() > 0) {
@@ -44,11 +47,9 @@ public class ScheduleHelper {
 
                 System.out.println("start: " + key);
                 System.out.println("end: " + strtDurMap.get(key));
-
-                Range<Integer> durRange = Range.between(key,
-                        strtDurMap.get(key) - 1);
-                if (durRange.contains(strtTime)
-                        || durRange.contains(endTime)) {
+                
+                if (durRange.contains(key)
+                        || durRange.contains(strtDurMap.get(key)-1)) {
                     return true;
 
                 }

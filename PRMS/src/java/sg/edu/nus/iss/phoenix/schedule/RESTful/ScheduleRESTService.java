@@ -17,6 +17,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -32,8 +33,7 @@ import sg.edu.nus.iss.phoenix.schedule.service.ScheduleService;
 
 /**
  *
- * @author Divahar Sethuraman 
- * This class contains the rest methods related to
+ * @author Divahar Sethuraman This class contains the rest methods related to
  * schedule
  */
 @Path("schedule")
@@ -200,7 +200,7 @@ public class ScheduleRESTService {
      * @return
      * @throws java.text.ParseException
      */
-    @PUT
+    @POST
     @Path("/update")
     @Consumes(MediaType.APPLICATION_JSON)
     public String updateProgramSlot(ProgramSlot ps) throws ParseException {
@@ -210,7 +210,7 @@ public class ScheduleRESTService {
         boolean isInAnnual = false;
         boolean isInWeekly = false;
         boolean conflictFlag = false;
-        
+
         try {
             Calendar cal = Calendar.getInstance();
             String strtTime = String.valueOf(ps.getStartTime().getHours()) + ":"
@@ -218,7 +218,9 @@ public class ScheduleRESTService {
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
             Date date = sdf.parse(strtTime);
             cal.setTime(date);
-
+            if (ps.getStartTime().getMinutes() == 0) {
+                strtTime = strtTime + "0";
+            }
             int durationInt = (ps.getDuration().
                     getHours() * 60) + ps.getDuration().getMinutes();
 
@@ -228,7 +230,7 @@ public class ScheduleRESTService {
 
             String endTime = sdf.format(cal.getTime());
 
-             int strtTimeInt = Integer.
+            int strtTimeInt = Integer.
                     valueOf(strtTime.replaceAll(":", ""));
 
             int schYear = ScheduleHelper.

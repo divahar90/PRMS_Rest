@@ -58,7 +58,7 @@ public class UserDaoImpl implements UserDao {
 
         try {
             sql = "INSERT INTO user ( id, password, name, "
-                    + "contact,address,dob,doj) VALUES (?, ?, ?, ?, ?, ?, ?) ";
+                    + "contact,address,dob,doj,isActive) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ";
             stmt = this.connection.prepareStatement(sql);
 
             stmt.setString(1, valueObject.getId());
@@ -70,6 +70,7 @@ public class UserDaoImpl implements UserDao {
             stmt.setDate(6, d);
             d = new java.sql.Date(sdf.parse(valueObject.getDoj()).getTime());
             stmt.setDate(7, d);
+            stmt.setBoolean(8, true);
 
             int rowcount = databaseUpdate(stmt);
             if (rowcount != 1) {

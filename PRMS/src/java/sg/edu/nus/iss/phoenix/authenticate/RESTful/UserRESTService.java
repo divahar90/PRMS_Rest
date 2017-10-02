@@ -28,8 +28,7 @@ import sg.edu.nus.iss.phoenix.schedule.service.ScheduleService;
 
 /**
  *
- * @author Divahar Sethuraman 
- * This class has all the methods/operations related
+ * @author Divahar Sethuraman This class has all the methods/operations related
  * to User
  *
  */
@@ -81,10 +80,12 @@ public class UserRESTService {
                             isCreate = false;
                             obj.put("status", isCreate);
                             obj.put("message", "Role cannot be created for the user");
-                            break;
+                            return obj.toString();                      
                         }
                     }
                 }
+                obj.put("status", isCreate);
+                obj.put("message", "User created successfully");
             } else {
                 obj.put("status", isCreate);
                 obj.put("message", "User already exists");

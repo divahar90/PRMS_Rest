@@ -173,7 +173,7 @@ public class ScheduleDAOImpl implements ScheduleDAO {
     public synchronized List<ProgramSlot>
             retrieve(Date dateOfProgram) throws SQLException {
 
-        String sql = "SELECT * FROM `program-slot` WHERE (`dateOfProgram` = ? ); ";
+        String sql = "SELECT * FROM `program-slot` WHERE (`dateOfProgram` = ? ) order by startTime asc; ";
         PreparedStatement stmt = null;
         ResultSet result = null;
         boolean conflictFlag = false;
