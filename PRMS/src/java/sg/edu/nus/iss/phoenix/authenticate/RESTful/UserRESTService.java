@@ -28,7 +28,8 @@ import sg.edu.nus.iss.phoenix.schedule.service.ScheduleService;
 
 /**
  *
- * @author Divahar Sethuraman This class has all the methods/operations related
+ * @author Divahar Sethuraman 
+ * This class has all the methods/operations related
  * to User
  *
  */

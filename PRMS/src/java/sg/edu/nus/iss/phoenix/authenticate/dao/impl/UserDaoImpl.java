@@ -22,9 +22,8 @@ import sg.edu.nus.iss.phoenix.core.dao.DBConstants;
 import sg.edu.nus.iss.phoenix.core.helper.UserHelper;
 
 /**
- * @author Divahar Sethuraman
- * This class contains all database handling that
- * is needed to permanently store and retrieve User object instances.
+ * @author Divahar Sethuraman This class contains all database handling that is
+ * needed to permanently store and retrieve User object instances.
  */
 public class UserDaoImpl implements UserDao {
 
@@ -32,7 +31,7 @@ public class UserDaoImpl implements UserDao {
     private static final Logger logger = Logger.getLogger(UserDaoImpl.class.getName());
 
     Connection connection;
-    
+
     /*
 	 * (non-Javadoc)
 	 * 
@@ -66,10 +65,8 @@ public class UserDaoImpl implements UserDao {
             stmt.setString(3, valueObject.getName());
             stmt.setString(4, valueObject.getContact());
             stmt.setString(5, valueObject.getAddress());
-            Date d = new java.sql.Date(sdf.parse(valueObject.getDob()).getTime());
-            stmt.setDate(6, d);
-            d = new java.sql.Date(sdf.parse(valueObject.getDoj()).getTime());
-            stmt.setDate(7, d);
+            stmt.setDate(6, valueObject.getDob());
+            stmt.setDate(7, valueObject.getDoj());
             stmt.setBoolean(8, true);
 
             int rowcount = databaseUpdate(stmt);
@@ -77,7 +74,7 @@ public class UserDaoImpl implements UserDao {
                 isCreated = false;
             }
 
-        } catch (ParseException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(UserDaoImpl.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             if (stmt != null) {
@@ -101,9 +98,9 @@ public class UserDaoImpl implements UserDao {
     public List<User> retrieve(String user, String role) throws SQLException {
         List<User> userList = null;
         PreparedStatement stmt = null;
-        StringBuilder sql = new StringBuilder();  
+        StringBuilder sql = new StringBuilder();
         openConnection();
-                
+
         try {
             if (null != user
                     && user.equalsIgnoreCase("all") && role.equalsIgnoreCase("5")) {
@@ -165,10 +162,8 @@ public class UserDaoImpl implements UserDao {
             stmt.setString(2, user.getName());
             stmt.setString(3, user.getContact());
             stmt.setString(4, user.getAddress());
-            Date dob = new java.sql.Date(sdf.parse(user.getDob()).getTime());
-            stmt.setDate(5, dob);
-            Date doj = new java.sql.Date(sdf.parse(user.getDoj()).getTime());
-            stmt.setDate(6, doj);
+            stmt.setDate(5, user.getDob());
+            stmt.setDate(6, user.getDoj());
             stmt.setString(7, user.getId());
 
             int rowcount = databaseUpdate(stmt);
@@ -245,17 +240,17 @@ public class UserDaoImpl implements UserDao {
                     && null != password) {
                 sql = "SELECT u.*,r.* FROM `user` u,`role` r where u.id = '" + userId + "' and u.password = '" + password + "'"
                         + " and u.id = r.userid and u.isActive = true;";
-                
+
                 System.out.println(sql);
 
                 stmt = this.connection.prepareStatement(sql);
-                
-                List<User> 
-                        userList = listQuery(stmt);
-                
-                if(null!=userList && userList.size()>0)
+
+                List<User> userList = listQuery(stmt);
+
+                if (null != userList && userList.size() > 0) {
                     user = userList.get(0);
-                    
+                }
+
             }
         } finally {
             if (stmt != null) {
@@ -263,7 +258,7 @@ public class UserDaoImpl implements UserDao {
             }
             closeConnection();
         }
-        
+
         return user;
     }
 
@@ -275,7 +270,7 @@ public class UserDaoImpl implements UserDao {
      */
     protected List<User> listQuery(PreparedStatement stmt) throws SQLException {
 
-        ResultSet result = null;        
+        ResultSet result = null;
         List<User> userList = null;
         try {
             result = stmt.executeQuery();
@@ -295,8 +290,8 @@ public class UserDaoImpl implements UserDao {
                     user.setName(result.getString("name"));
                     user.setContact(result.getString("contact"));
                     user.setAddress(result.getString("address"));
-                    user.setDob(result.getDate("dob").toString());
-                    user.setDoj(result.getDate("doj").toString());
+                    user.setDob(result.getDate("dob"));
+                    user.setDoj(result.getDate("doj"));
                     user.setPassword(result.getString("password"));
 
                     userMap.put(result.getString("id"),
@@ -408,22 +403,22 @@ public class UserDaoImpl implements UserDao {
     }
 
     private void openConnection() {
-		try {
-			Class.forName(DBConstants.COM_MYSQL_JDBC_DRIVER);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        try {
+            Class.forName(DBConstants.COM_MYSQL_JDBC_DRIVER);
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-		try {
-			this.connection = DriverManager.getConnection(DBConstants.dbUrl,
-					DBConstants.dbUserName, DBConstants.dbPassword);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
+        try {
+            this.connection = DriverManager.getConnection(DBConstants.dbUrl,
+                    DBConstants.dbUserName, DBConstants.dbPassword);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
 
     private void closeConnection() {
         try {
