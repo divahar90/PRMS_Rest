@@ -15,19 +15,19 @@ import java.util.HashMap;
 import org.apache.commons.lang3.Range;
 
 /**
- *
+ * This class contains the helper methods for schedule
  * @author Divahar Sethuraman 
- * This class contains the helper methods for
- * schedule
+ * 
  */
 public class ScheduleHelper {
 
     /**
-     *
-     * @param result
-     * @param strtTime
-     * @param endTime
-     * @param id
+     * Method to check conflicts with range
+     * 
+     * @param result Resultset of DB
+     * @param strtTime Start time of the program
+     * @param endTime Computed End time of the program
+     * @param id program slot id, used for modifying
      * @return
      * @throws ParseException
      */
@@ -37,19 +37,20 @@ public class ScheduleHelper {
 
         HashMap<Integer, Integer> strtDurMap
                 = getStrtEndTime(result, id);
-        
-        Range<Integer> durRange = Range.between(strtTime,
-                       endTime);
+                
+        Range<Integer> inpDurRange = Range.between(strtTime,
+                       endTime-1);
 
         if (null != strtDurMap
                 && strtDurMap.size() > 0) {
             for (int key : strtDurMap.keySet()) {
-
-                System.out.println("start: " + key);
-                System.out.println("end: " + strtDurMap.get(key));
                 
-                if (durRange.contains(key)
-                        || durRange.contains(strtDurMap.get(key)-1)) {
+                Range<Integer> durRange = Range.between(key,
+                       strtDurMap.get(key)-1);
+                
+                if (durRange.contains(strtTime)
+                        || durRange.contains(endTime) || inpDurRange.contains(key)
+                        || inpDurRange.contains(strtDurMap.get(key))) {
                     return true;
 
                 }
@@ -60,9 +61,10 @@ public class ScheduleHelper {
     }
 
     /**
-     *
-     * @param result
-     * @param id
+     * Method to get the map of Start and End time
+     * 
+     * @param result Resultset of DB
+     * @param id program slot id, used for modifying
      * @return
      * @throws ParseException
      */
@@ -127,6 +129,12 @@ public class ScheduleHelper {
 
     }
 
+    /**
+     * Method to get year from a date
+     * 
+     * @param dateOfProg Date of Program Slot
+     * @return
+     */
     public static int getYear(Date dateOfProg) {
 
         Calendar c = Calendar.getInstance();
@@ -137,6 +145,12 @@ public class ScheduleHelper {
         return year;
     }
 
+    /**
+     * Method to get start date of a week 
+     * 
+     * @param dateOfProg Date of Program Slot
+     * @return
+     */
     public static Date getStrtDate(Date dateOfProg) {
         Calendar c = Calendar.getInstance();
         c.setTime(dateOfProg);

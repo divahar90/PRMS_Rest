@@ -3,15 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sg.edu.nus.iss.phoenix.authenticate.RESTful;
-
+package sg.edu.nus.iss.phoenix.user.RESTful;
 import java.util.List;
-import sg.edu.nus.iss.phoenix.authenticate.entity.User;
+import sg.edu.nus.iss.phoenix.user.entity.User;
 
 /**
- *
- * @author Divahar Sethuraman
  * This class is used to send the user details to Android
+ * @author Divahar Sethuraman
+ * 
  */
 public class Users {
     
@@ -27,7 +26,7 @@ public class Users {
 
     /**
      *
-     * @param users
+     * @param users list of users
      */
     public void setUsers(List<User> users) {
         this.users = users;

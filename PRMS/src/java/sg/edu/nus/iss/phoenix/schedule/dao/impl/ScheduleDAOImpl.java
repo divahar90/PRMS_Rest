@@ -24,19 +24,20 @@ import sg.edu.nus.iss.phoenix.schedule.entity.ProgramSlot;
 import java.sql.Time;
 
 /**
- *
+ * This class contains all methods to do operations with program-slot table
+ * 
  * @author Divahar Sethuraman 
- * This class contains all methods to do operations
- * with program-slot table
+ * 
  */
 public class ScheduleDAOImpl implements ScheduleDAO {
 
     Connection connection;
 
     /**
-     *
-     * @param valueObject
-     * @return
+     * Method for creating a program slot
+     * 
+     * @param valueObject Program slot object
+     * @return boolean
      * @throws SQLException
      */
     @Override
@@ -75,9 +76,10 @@ public class ScheduleDAOImpl implements ScheduleDAO {
     }
 
     /**
-     *
-     * @param valueObject
-     * @return
+     * Method for updating a program slot
+     *  
+     * @param valueObject Program slot object
+     * @return boolean
      * @throws SQLException
      */
     @Override
@@ -119,9 +121,10 @@ public class ScheduleDAOImpl implements ScheduleDAO {
     }
 
     /**
-     *
-     * @param dateOfProg
-     * @param strtTime
+     * Method for deleting a program slot
+     * 
+     * @param dateOfProg Date of Program slot
+     * @param strtTime Start time of program slot
      * @return
      * @throws NotFoundException
      * @throws SQLException
@@ -131,6 +134,9 @@ public class ScheduleDAOImpl implements ScheduleDAO {
             SQLException {
 
         boolean isDeleted = true;
+        
+        System.out.println("Date of prog - Del:"+ dateOfProg);
+        System.out.println("strtTime - Del:"+ strtTime);
 
         if (null == dateOfProg && null == strtTime) {
             throw new NotFoundException("Can not delete without Primary-Key!");
@@ -164,8 +170,9 @@ public class ScheduleDAOImpl implements ScheduleDAO {
     }
 
     /**
-     *
-     * @param dateOfProgram
+     * Method for retrieving program slots
+     * 
+     * @param dateOfProgram Date of program slot
      * @return
      * @throws SQLException
      */
@@ -200,11 +207,12 @@ public class ScheduleDAOImpl implements ScheduleDAO {
     }
 
     /**
-     *
-     * @param dateOfProgram
-     * @param strtTime
-     * @param endTime
-     * @param id
+     * Method for checking conflicts
+     * 
+     * @param dateOfProgram Date of program slot
+     * @param strtTime Start Time of program slot
+     * @param endTime End time of slot
+     * @param id slot id
      * @return
      * @throws SQLException
      */
@@ -244,7 +252,10 @@ public class ScheduleDAOImpl implements ScheduleDAO {
     }
 
     /**
-     *
+     * Method for checking whether program has schedule
+     * 
+     * @param progName Name of the program
+     * 
      * @return @throws SQLException
      */
     @Override
@@ -260,6 +271,8 @@ public class ScheduleDAOImpl implements ScheduleDAO {
 
             stmt = connection.prepareStatement(sql);
             stmt.setString(1, progName);
+            
+            System.out.println("Check prog has sch:"+sql);
 
             result = stmt.executeQuery();
 
@@ -279,9 +292,10 @@ public class ScheduleDAOImpl implements ScheduleDAO {
     }
 
     /**
-     *
-     * @param userId
-     * @return
+     * Method for getting slots assigned for user
+     * 
+     * @param userId User ID
+     * @return int
      * @throws SQLException
      */
     @Override
@@ -289,11 +303,14 @@ public class ScheduleDAOImpl implements ScheduleDAO {
             getSlotCount(String userId) throws SQLException {
 
         String sql = "SELECT count(*) FROM `program-slot` WHERE "
-                + "(`producerId` = ? or `presenterId` = ? and `dateOfProgram` >= CURDATE());";
+                + "(`producerId` = ? or `presenterId` = ?) and `dateOfProgram` >= CURDATE();";
         PreparedStatement stmt = null;
         ResultSet result = null;
         int allRows = 0;
         openConnection();
+        
+        System.out.println(userId);
+        
         try {
 
             stmt = connection.prepareStatement(sql);
@@ -301,6 +318,8 @@ public class ScheduleDAOImpl implements ScheduleDAO {
             stmt.setString(2, userId);
 
             result = stmt.executeQuery();
+            
+            System.out.println("Del user: "+sql);
 
             if (result.next()) {
                 allRows = result.getInt(1);
@@ -314,9 +333,18 @@ public class ScheduleDAOImpl implements ScheduleDAO {
             }
             closeConnection();
         }
+        
+        System.out.println(allRows);
         return allRows;
     }
 
+    /**
+     * Method for checking an annual schedule
+     * 
+     * @param year Year to be checked
+     * @return boolean
+     * @throws SQLException
+     */
     @Override
     public boolean checkAnnual(int year) throws SQLException {
 
@@ -352,6 +380,13 @@ public class ScheduleDAOImpl implements ScheduleDAO {
         return isAvail;
     }
 
+    /**
+     * Method for checking a weekly schedule
+     * 
+     * @param dateOfProg Date of Program
+     * @return boolean
+     * @throws SQLException
+     */
     @Override
     public boolean checkWeekly(Date dateOfProg) throws SQLException {
         String sql = "SELECT count(*) FROM `weekly-schedule` WHERE startDate = '" + dateOfProg + "';";
@@ -386,6 +421,13 @@ public class ScheduleDAOImpl implements ScheduleDAO {
         return isAvail;
     }
 
+    /**
+     * Method for creating an annual schedule
+     * 
+     * @param year Year to be created
+     * @return boolean
+     * @throws SQLException
+     */
     @Override
     public boolean createAnnualSch(int year)
             throws SQLException {
@@ -417,6 +459,13 @@ public class ScheduleDAOImpl implements ScheduleDAO {
         return isCreate;
     }
     
+    /**
+     * Method for creating a weekly schedule
+     * 
+     * @param dateOfWeek Start date of week
+     * @return boolean
+     * @throws SQLException
+     */
     @Override
     public boolean createWeeklySch(Date dateOfWeek)
             throws SQLException {
@@ -449,9 +498,10 @@ public class ScheduleDAOImpl implements ScheduleDAO {
     }
 
     /**
-     *
-     * @param stmt
-     * @return
+     * Method to process and return list of program slots
+     * 
+     * @param stmt Prepared statement
+     * @return List of program slots
      * @throws SQLException
      */
     protected List<ProgramSlot> listQuery(PreparedStatement stmt) throws SQLException {
@@ -532,8 +582,9 @@ public class ScheduleDAOImpl implements ScheduleDAO {
     }
 
     /**
-     *
-     * @param stmt
+     * Method to execute DB update
+     * 
+     * @param stmt Prepared statement
      * @return
      * @throws SQLException
      */

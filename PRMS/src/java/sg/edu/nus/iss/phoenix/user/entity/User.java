@@ -1,13 +1,14 @@
-package sg.edu.nus.iss.phoenix.authenticate.entity;
+package sg.edu.nus.iss.phoenix.user.entity;
 
+import sg.edu.nus.iss.phoenix.authenticate.entity.*;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
 
 /**
- * @author Divahar Sethuraman This class is value object representing database
- * table user This class is intented to be used together with associated Dao
- * object.
+ * This class is value object representing database table user
+ *
+ * @author Divahar Sethuraman
  */
 public class User implements Cloneable, Serializable {
 
@@ -84,18 +85,34 @@ public class User implements Cloneable, Serializable {
         this.address = address;
     }
 
+    /**
+     *
+     * @return
+     */
     public Date getDob() {
         return dob;
     }
 
+    /**
+     *
+     * @param dob
+     */
     public void setDob(Date dob) {
         this.dob = dob;
     }
 
+    /**
+     *
+     * @return
+     */
     public Date getDoj() {
         return doj;
     }
 
+    /**
+     *
+     * @param doj
+     */
     public void setDoj(Date doj) {
         this.doj = doj;
     }

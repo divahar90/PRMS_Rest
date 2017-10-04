@@ -7,16 +7,21 @@ package sg.edu.nus.iss.phoenix.schedule.service;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
+import sg.edu.nus.iss.phoenix.core.helper.ScheduleHelper;
 import sg.edu.nus.iss.phoenix.schedule.dao.ScheduleDAO;
 import sg.edu.nus.iss.phoenix.schedule.entity.ProgramSlot;
 
 /**
+ * This is a service class that creates the schedule dao object and call the
+ * methods appropriately
  *
- * @author Divahar Sethuraman 
- * This is a service class that creates the schedule
- * dao object and call the methods appropriately
+ * @author Divahar Sethuraman
+ *
  */
 public class ScheduleService {
 
@@ -24,7 +29,7 @@ public class ScheduleService {
     ScheduleDAO scheduleDAO;
 
     /**
-     *
+     * Constructor for Schedule Service
      */
     public ScheduleService() {
         factory = new DAOFactoryImpl();
@@ -32,14 +37,78 @@ public class ScheduleService {
     }
 
     /**
-     *
-     * @param ps
+     * Method to create a program slot
+     * 
+     * @param ps program slot object
      * @return
+     * @throws java.text.ParseException
      */
-    public boolean processCreate(ProgramSlot ps) {
-        boolean isCreate = true;
+    public boolean processCreate(ProgramSlot ps) throws ParseException {
+        boolean isCreate = false;
+        boolean isInAnnual = false;
+        boolean isInWeekly = false;
+        boolean conflictFlag = false;
+
         try {
-            isCreate = scheduleDAO.create(ps);
+
+            Calendar cal = Calendar.getInstance();
+            String strtTime = String.valueOf(ps.getStartTime().getHours()) + ":"
+                    + String.valueOf(ps.getStartTime().getMinutes());
+
+            if (ps.getStartTime().getMinutes() == 0) {
+                strtTime = strtTime + "0";
+            }
+
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            java.util.Date date = sdf.parse(strtTime);
+            cal.setTime(date);
+
+            int durationInt = (ps.getDuration().
+                    getHours() * 60) + ps.getDuration().getMinutes();
+
+            cal.add(Calendar.MINUTE, (durationInt - 1));
+
+            String endTime = sdf.format(cal.getTime());
+
+            int strtTimeInt = Integer.
+                    valueOf(strtTime.replaceAll(":", ""));
+
+            int schYear = ScheduleHelper.
+                    getYear(ps.getDateOfProgram()); // Get the year of program slot
+
+            System.out.println("schYear: " + schYear);
+
+            isInAnnual = chkProgYear(schYear);
+
+            java.util.Date strtDay = ScheduleHelper.
+                    getStrtDate(ps.getDateOfProgram());
+
+            java.sql.Date sqlDate
+                    = new java.sql.Date(strtDay.getTime());
+
+            if (!isInAnnual) {
+                createAnnualSch(schYear);
+            }
+
+            isInWeekly
+                    = chkProgSchWeek(new java.sql.Date(strtDay
+                            .getTime()));
+
+            if (!isInWeekly) {
+                createWeeklySch(sqlDate);
+            } else {
+                conflictFlag
+                        = checkConflicts(ps.getDateOfProgram(), strtTimeInt,
+                                Integer.valueOf(endTime.replaceAll(":", "")), 0);
+            }
+
+            System.out.println(conflictFlag);
+
+            if (!conflictFlag) {
+                isCreate = scheduleDAO.create(ps);
+                isCreate = true;
+            }
+
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -49,15 +118,77 @@ public class ScheduleService {
     }
 
     /**
-     *
-     * @param ps
-     * @return
+     * Method to update a program slot
+     *  
+     * @param ps program slot object
+     * @return boolean
      */
     public boolean processUpdate(ProgramSlot ps) {
-        boolean isUpdate = true;
+        boolean isUpdate = false;
+        boolean isInAnnual = false;
+        boolean isInWeekly = false;
+        boolean conflictFlag = false;
 
         try {
-            isUpdate = scheduleDAO.update(ps);
+            Calendar cal = Calendar.getInstance();
+            String strtTime = String.valueOf(ps.getStartTime().getHours()) + ":"
+                    + String.valueOf(ps.getStartTime().getMinutes());
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            java.util.Date date = sdf.parse(strtTime);
+            cal.setTime(date);
+            if (ps.getStartTime().getMinutes() == 0) {
+                strtTime = strtTime + "0";
+            }
+            int durationInt = (ps.getDuration().
+                    getHours() * 60) + ps.getDuration().getMinutes();
+
+            System.out.println(durationInt);
+
+            cal.add(Calendar.MINUTE, (durationInt - 1));
+
+            String endTime = sdf.format(cal.getTime());
+
+            int strtTimeInt = Integer.
+                    valueOf(strtTime.replaceAll(":", ""));
+
+            int schYear = ScheduleHelper.
+                    getYear(ps.getDateOfProgram()); // Get the year of program slot
+
+            System.out.println("schYear: " + schYear);
+
+            isInAnnual = chkProgYear(schYear);
+
+            java.util.Date strtDay = ScheduleHelper.
+                    getStrtDate(ps.getDateOfProgram());
+
+            java.sql.Date sqlDate
+                    = new java.sql.Date(strtDay.getTime());
+
+            System.out.println("sqlDate: " + sqlDate);
+
+            if (!isInAnnual) {
+                createAnnualSch(schYear);
+            }
+
+            isInWeekly
+                    = chkProgSchWeek(new java.sql.Date(strtDay
+                            .getTime()));
+
+            if (!isInWeekly) {
+                createWeeklySch(sqlDate);
+            } else {
+                conflictFlag
+                        = checkConflicts(ps.getDateOfProgram(), strtTimeInt,
+                                Integer.valueOf(endTime.replaceAll(":", "")), ps.getId());
+            }
+
+            System.out.println(conflictFlag);
+
+            if (!conflictFlag) {
+                isUpdate = scheduleDAO.update(ps);
+                isUpdate = true;
+            }
+
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -67,15 +198,21 @@ public class ScheduleService {
     }
 
     /**
-     *
-     * @param dateOfProg
-     * @param strtTime
-     * @return
+     * Method to delete a program slot
+     * 
+     * @param dateOfProg Date of Program slot
+     * @param strtTime Start time of program slot
+     * @return boolean
      */
-    public boolean processDelete(Date dateOfProg, String strtTime) {
+    public boolean processDelete(String dateOfProg,
+            String strtTime) {
         boolean isDeleted = true;
         try {
-            isDeleted = scheduleDAO.delete(dateOfProg, strtTime);
+            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date date = sdf1.parse(dateOfProg);
+            java.sql.Date dateProg = new java.sql.Date(date.getTime());
+
+            isDeleted = scheduleDAO.delete(dateProg, strtTime);
         } catch (Exception exp) {
 
         }
@@ -84,14 +221,20 @@ public class ScheduleService {
     }
 
     /**
-     *
-     * @param dateOfProg
-     * @return
+     * Method to retrieve program slots
+     * 
+     * @param dateOfProg Date of Program
+     * @return list of program slots
      */
-    public List<ProgramSlot> retrieve(Date dateOfProg) {
+    public List<ProgramSlot> processRetrieve(String dateOfProg) {
         List<ProgramSlot> slots = null;
+
         try {
-            slots = scheduleDAO.retrieve(dateOfProg);
+            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date date = sdf1.parse(dateOfProg);
+            java.sql.Date dateProg = new java.sql.Date(date.getTime());
+
+            slots = scheduleDAO.retrieve(dateProg);
         } catch (Exception exp) {
 
         }
@@ -99,11 +242,12 @@ public class ScheduleService {
     }
 
     /**
-     *
-     * @param dateOfProg
-     * @param strt
-     * @param end
-     * @param id
+     * Method to check conflicts for a program slot
+     * 
+     * @param dateOfProg Date of Program slot
+     * @param strt Start time
+     * @param end End time
+     * @param id slot id
      * @return
      */
     public boolean checkConflicts(Date dateOfProg,
@@ -120,9 +264,10 @@ public class ScheduleService {
     }
 
     /**
-     *
-     * @param progName
-     * @return
+     * Method to whether a program has a schedule
+     * 
+     * @param progName Program name
+     * @return int
      */
     public int checkProgHasSch(String progName) {
         int nbrRows = 0;
@@ -136,9 +281,10 @@ public class ScheduleService {
     }
 
     /**
-     *
-     * @param userId
-     * @return
+     * Method to check if a user is assigned to a slot
+     * 
+     * @param userId User ID
+     * @return int
      */
     public int isAssigned(String userId) {
         int slotCount = 0;
@@ -153,6 +299,12 @@ public class ScheduleService {
         return slotCount;
     }
 
+    /**
+     * Method to check annual schedule
+     * 
+     * @param year year to be checked
+     * @return boolean
+     */
     public boolean chkProgYear(int year) {
         boolean isAvail = false;
         try {
@@ -166,6 +318,12 @@ public class ScheduleService {
         return isAvail;
     }
 
+    /**
+     * Method to check a weekly schedule
+     * 
+     * @param dateOfProg Date of Program
+     * @return boolean
+     */
     public boolean chkProgSchWeek(Date dateOfProg) {
         boolean isAvail = false;
         try {
@@ -178,8 +336,13 @@ public class ScheduleService {
         return isAvail;
     }
 
-    public boolean createAnnualSch(int year,
-            String assignedBy) {
+    /**
+     * Method to create annual schedule
+     * 
+     * @param year Year to be created
+     * @return
+     */
+    public boolean createAnnualSch(int year) {
         boolean isCreated = false;
         try {
             isCreated = scheduleDAO.
@@ -191,8 +354,13 @@ public class ScheduleService {
         return isCreated;
     }
 
-    public boolean createWeeklySch(Date strtDate,
-            String assignedBy) {
+    /**
+     * Method to create a weekly schedule
+     * 
+     * @param strtDate Start date of the week
+     * @return
+     */
+    public boolean createWeeklySch(Date strtDate) {
         boolean isCreated = false;
         try {
             isCreated = scheduleDAO.

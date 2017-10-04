@@ -5,7 +5,7 @@ import java.util.List;
 import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
 
 /**
- *
+ * This class contains all the DAO operations related to Role
  * @author Divahar Sethuraman
  */
 public interface RoleDao {
@@ -27,15 +27,15 @@ public interface RoleDao {
      * @return
      * @throws SQLException
      */
-    public abstract List<Role> retrieve(String userId) 
-           throws SQLException;
-   
+    public abstract List<Role> retrieve(String userId)
+            throws SQLException;
+
     /**
      *
      * @param userId
      * @return
      * @throws SQLException
      */
-    public abstract boolean delete(String userId) 
-           throws SQLException;
+    public abstract boolean delete(String userId)
+            throws SQLException;
 }

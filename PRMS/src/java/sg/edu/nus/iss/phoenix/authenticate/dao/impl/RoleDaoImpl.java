@@ -1,5 +1,6 @@
 package sg.edu.nus.iss.phoenix.authenticate.dao.impl;
 
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -12,10 +13,10 @@ import sg.edu.nus.iss.phoenix.authenticate.dao.RoleDao;
 import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
 import sg.edu.nus.iss.phoenix.core.dao.DBConstants;
 
+
 /**
- * @author Divahar Sethuraman
- * This class contains all database handling that
- * is needed to permanently store and retrieve Role object instances.
+ * This class contains all database handling that is needed to permanently store and retrieve Role object instances.
+ * @author Divahar Sethuraman 
  */
 public class RoleDaoImpl implements RoleDao {
 
@@ -27,8 +28,7 @@ public class RoleDaoImpl implements RoleDao {
      *
      */
     public RoleDaoImpl() {
-        super();
-        // TODO Auto-generated constructor stub
+        super();        
         connection = openConnection();
     }
 
@@ -42,9 +42,9 @@ public class RoleDaoImpl implements RoleDao {
      */
     /**
      *
-     * @param valueObject
-     * @param id
-     * @return
+     * @param valueObject Role object
+     * @param id User ID
+     * @return boolean
      * @throws SQLException
      */
     @Override
@@ -81,8 +81,8 @@ public class RoleDaoImpl implements RoleDao {
 
     /**
      *
-     * @param userId
-     * @return
+     * @param userId User Id
+     * @return roleList
      * @throws SQLException
      */
     @Override
@@ -111,8 +111,8 @@ public class RoleDaoImpl implements RoleDao {
 
     /**
      *
-     * @param userId
-     * @return
+     * @param userId User ID
+     * @return boolean
      * @throws SQLException
      */
     @Override
@@ -145,8 +145,8 @@ public class RoleDaoImpl implements RoleDao {
 
     /**
      *
-     * @param stmt
-     * @return
+     * @param stmt prepared statement for executing list query
+     * @return roleList
      * @throws SQLException
      */
     protected List<Role> listQuery(PreparedStatement stmt) throws SQLException {
@@ -188,7 +188,7 @@ public class RoleDaoImpl implements RoleDao {
      * sure that if cache is used, it will reset when data changes.
      *
      * @param stmt This parameter contains the SQL statement to be excuted.
-     * @return
+     * @return 
      * @throws java.sql.SQLException
      */
     protected int databaseUpdate(PreparedStatement stmt) throws SQLException {

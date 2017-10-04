@@ -5,11 +5,7 @@
  */
 package sg.edu.nus.iss.phoenix.schedule.RESTful;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,15 +22,15 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 import org.json.JSONObject;
-import sg.edu.nus.iss.phoenix.authenticate.service.UserService;
-import sg.edu.nus.iss.phoenix.core.helper.ScheduleHelper;
 import sg.edu.nus.iss.phoenix.schedule.entity.ProgramSlot;
 import sg.edu.nus.iss.phoenix.schedule.service.ScheduleService;
+import sg.edu.nus.iss.phoenix.user.service.UserService;
 
 /**
- *
- * @author Divahar Sethuraman This class contains the rest methods related to
- * schedule
+ * This class contains the rest methods related to schedule 
+ * 
+ * @author Divahar Sethuraman 
+ * 
  */
 @Path("schedule")
 @RequestScoped
@@ -56,87 +52,21 @@ public class ScheduleRESTService {
     }
 
     /**
-     * POST method for creating an instance of resource
+     * POST method for creating a program slot
      *
-     * @param ps
-     * @return
-     * @throws java.text.ParseException
+     * @param ps program slot object
+     * @return String - Json object with status and message
      */
     @PUT
     @Path("/create")
     @Consumes(MediaType.APPLICATION_JSON)
-    public String createProgramSlot(ProgramSlot ps) throws ParseException {
-
-        boolean isCreate = false;
-        boolean isInAnnual = false;
-        boolean isInWeekly = false;
-        boolean conflictFlag = false;
+    public String createProgramSlot(ProgramSlot ps) {
 
         JSONObject obj = new JSONObject();
+        boolean isCreate = false;
         try {
 
-            System.out.println(ps.getStartTime());
-            System.out.println(ps.getDuration());
-            System.out.println(ps.getDateOfProgram());
-
-            Calendar cal = Calendar.getInstance();
-            String strtTime = String.valueOf(ps.getStartTime().getHours()) + ":"
-                    + String.valueOf(ps.getStartTime().getMinutes());
-
-            if (ps.getStartTime().getMinutes() == 0) {
-                strtTime = strtTime + "0";
-            }
-
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            Date date = sdf.parse(strtTime);
-            cal.setTime(date);
-
-            int durationInt = (ps.getDuration().
-                    getHours() * 60) + ps.getDuration().getMinutes();
-
-            cal.add(Calendar.MINUTE, (durationInt - 1));
-
-            String endTime = sdf.format(cal.getTime());
-
-            int strtTimeInt = Integer.
-                    valueOf(strtTime.replaceAll(":", ""));
-
-            int schYear = ScheduleHelper.
-                    getYear(ps.getDateOfProgram()); // Get the year of program slot
-
-            System.out.println("schYear: " + schYear);
-
-            isInAnnual = service.chkProgYear(schYear);
-
-            Date strtDay = ScheduleHelper.
-                    getStrtDate(ps.getDateOfProgram());
-
-            java.sql.Date sqlDate
-                    = new java.sql.Date(strtDay.getTime());
-
-            System.out.println("sqlDate: " + sqlDate);
-
-            if (!isInAnnual) {
-                service.createAnnualSch(schYear, endTime);
-            }
-
-            isInWeekly = service.
-                    chkProgSchWeek(new java.sql.Date(strtDay
-                            .getTime()));
-
-            if (!isInWeekly) {
-                service.createWeeklySch(sqlDate, endTime);
-            } else {
-                conflictFlag = service.
-                        checkConflicts(ps.getDateOfProgram(), strtTimeInt,
-                                Integer.valueOf(endTime.replaceAll(":", "")), 0);
-            }
-
-            System.out.println(conflictFlag);
-
-            if (!conflictFlag) {
-                isCreate = service.processCreate(ps);
-            }
+            isCreate = service.processCreate(ps);
 
             if (isCreate) {
                 obj.put("status", isCreate);
@@ -153,11 +83,11 @@ public class ScheduleRESTService {
     }
 
     /**
-     * DELETE method for deleting an instance of resource
+     * DELETE method for deleting a program slot
      *
-     * @param dateOfProgram and Start Time of the resource
-     * @param startTime
-     * @return
+     * @param dateOfProgram Date of the program slot
+     * @param startTime Start time of the program slot
+     * @return String - Json object with status and message
      */
     @DELETE
     @Path("/delete/{dateOfProgram}/{startTime}")
@@ -169,15 +99,10 @@ public class ScheduleRESTService {
         JSONObject obj = new JSONObject();
 
         try {
-            System.out.println(dateOfProgram);
-            System.out.println(startTime);
-
-            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-            java.util.Date date = sdf1.parse(dateOfProgram);
-            java.sql.Date dateProg = new java.sql.Date(date.getTime());
 
             isDeleted
-                    = service.processDelete(dateProg, startTime);
+                    = service.processDelete(dateOfProgram,
+                            startTime);
 
             if (isDeleted) {
                 obj.put("status", isDeleted);
@@ -196,79 +121,19 @@ public class ScheduleRESTService {
     /**
      * PUT method for updating a program slot
      *
-     * @param ps
-     * @return
-     * @throws java.text.ParseException
+     * @param ps Program slot object
+     * @return String - Json object with status and message
      */
     @POST
     @Path("/update")
     @Consumes(MediaType.APPLICATION_JSON)
-    public String updateProgramSlot(ProgramSlot ps) throws ParseException {
-
+    public String updateProgramSlot(ProgramSlot ps) {
         boolean isUpdate = false;
         JSONObject obj = new JSONObject();
-        boolean isInAnnual = false;
-        boolean isInWeekly = false;
-        boolean conflictFlag = false;
 
         try {
-            Calendar cal = Calendar.getInstance();
-            String strtTime = String.valueOf(ps.getStartTime().getHours()) + ":"
-                    + String.valueOf(ps.getStartTime().getMinutes());
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            Date date = sdf.parse(strtTime);
-            cal.setTime(date);
-            if (ps.getStartTime().getMinutes() == 0) {
-                strtTime = strtTime + "0";
-            }
-            int durationInt = (ps.getDuration().
-                    getHours() * 60) + ps.getDuration().getMinutes();
 
-            System.out.println(durationInt);
-
-            cal.add(Calendar.MINUTE, (durationInt - 1));
-
-            String endTime = sdf.format(cal.getTime());
-
-            int strtTimeInt = Integer.
-                    valueOf(strtTime.replaceAll(":", ""));
-
-            int schYear = ScheduleHelper.
-                    getYear(ps.getDateOfProgram()); // Get the year of program slot
-
-            System.out.println("schYear: " + schYear);
-
-            isInAnnual = service.chkProgYear(schYear);
-
-            Date strtDay = ScheduleHelper.
-                    getStrtDate(ps.getDateOfProgram());
-
-            java.sql.Date sqlDate
-                    = new java.sql.Date(strtDay.getTime());
-
-            System.out.println("sqlDate: " + sqlDate);
-
-            if (!isInAnnual) {
-                service.createAnnualSch(schYear, endTime);
-            }
-
-            isInWeekly = service.
-                    chkProgSchWeek(new java.sql.Date(strtDay
-                            .getTime()));
-
-            if (!isInWeekly) {
-                service.createWeeklySch(sqlDate, endTime);
-            } else {
-                conflictFlag = service.
-                        checkConflicts(ps.getDateOfProgram(), strtTimeInt,
-                                Integer.valueOf(endTime.replaceAll(":", "")), ps.getId());
-            }
-
-            System.out.println(conflictFlag);
-
-            if (!conflictFlag) {
-                isUpdate = service.processUpdate(ps);
-            }
+            isUpdate = service.processUpdate(ps);
 
             if (isUpdate) {
                 obj.put("status", isUpdate);
@@ -288,15 +153,15 @@ public class ScheduleRESTService {
     /**
      * GET method for retrieving program slots
      *
-     * @param dateOfProg
-     * @return
-     * @throws java.text.ParseException
+     * @param dateOfProg Date of program slot to be deleted
+     * @return ProgramSlots - Program slots of the particular day
      */
+    
     @GET
     @Path("/retrieve")
     @Consumes(MediaType.APPLICATION_JSON)
-    public ProgramSlots retrieveProgramSlots(@QueryParam("dateOfProgram") String dateOfProg)
-            throws ParseException {
+    public ProgramSlots retrieveProgramSlots
+        (@QueryParam("dateOfProgram") String dateOfProg){
 
         ProgramSlots progSlots = null;
         List<String> idList = new ArrayList<>();
@@ -306,11 +171,9 @@ public class ScheduleRESTService {
 
         try {
             if (null != dateOfProg) {
-                SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-                java.util.Date date = sdf1.parse(dateOfProg);
-                java.sql.Date dateProg = new java.sql.Date(date.getTime());
 
-                List<ProgramSlot> slots = service.retrieve(dateProg);
+                List<ProgramSlot> slots = service.
+                        processRetrieve(dateOfProg);
                 progSlots = new ProgramSlots();
                 progSlots.setProgramSlots(new ArrayList<>());
 

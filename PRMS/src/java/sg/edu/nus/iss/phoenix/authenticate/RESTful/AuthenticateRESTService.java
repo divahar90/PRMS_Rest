@@ -13,8 +13,8 @@ import javax.ws.rs.Path;
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.authenticate.service.AuthenticateService;
+import sg.edu.nus.iss.phoenix.user.entity.User;
 
 /**
  * REST Web Service
@@ -38,11 +38,10 @@ public class AuthenticateRESTService {
     }
 
     /**
-     * Retrieves representation of an instance of
-     * sg.edu.nus.iss.phoenix.authenticate.RESTful.GenericResource
+     * Checks and validates the user name and password
      *
-     * @param uname
-     * @param pwd
+     * @param uname User name
+     * @param pwd Password
      * @return an instance of java.lang.String
      */
     @GET

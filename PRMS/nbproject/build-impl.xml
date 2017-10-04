@@ -49,7 +49,7 @@
         <property file="nbproject/project.properties"/>
     </target>
     <target depends="-pre-init,-init-private,-init-user,-init-project,-init-macrodef-property" if="dist.ear.dir" name="-do-ear-init"/>
-    <target depends="-pre-init,-init-private,-init-user,-init-project,-init-macrodef-property" name="-do-init">
+    <target depends="-pre-init,-init-private,-init-user,-init-project,-init-macrodef-property" name="-do-init">	
         <condition property="have.tests">
             <or>
                 <available file="${test.src.dir}"/>
@@ -1333,32 +1333,16 @@ exists or setup the property manually. For example like this:
     <!--
                 JAVADOC SECTION
             -->
-    <target depends="init" if="have.sources" name="javadoc-build">
-        <mkdir dir="${dist.javadoc.dir}"/>
-        <javadoc additionalparam="${javadoc.additionalparam}" author="${javadoc.author}" charset="UTF-8" destdir="${dist.javadoc.dir}" docencoding="UTF-8" encoding="${javadoc.encoding.used}" failonerror="true" noindex="${javadoc.noindex}" nonavbar="${javadoc.nonavbar}" notree="${javadoc.notree}" private="${javadoc.private}" source="${javac.source}" splitindex="${javadoc.splitindex}" use="${javadoc.use}" useexternalfile="true" version="${javadoc.version}" windowtitle="${javadoc.windowtitle}">
-            <classpath>
-                <path path="${javac.classpath}:${j2ee.platform.classpath}"/>
-            </classpath>
-            <fileset dir="${src.dir}" excludes="${excludes}" includes="${includes}">
-                <filename name="**/*.java"/>
-            </fileset>
-            <fileset dir="${build.generated.sources.dir}" erroronmissingdir="false">
-                <include name="**/*.java"/>
-            </fileset>
-        </javadoc>
-        <copy todir="${dist.javadoc.dir}">
-            <fileset dir="${src.dir}" excludes="${excludes}" includes="${includes}">
-                <filename name="**/doc-files/**"/>
-            </fileset>
-            <fileset dir="${build.generated.sources.dir}" erroronmissingdir="false">
-                <include name="**/doc-files/**"/>
-            </fileset>
-        </copy>
-    </target>
-    <target depends="init,javadoc-build" if="netbeans.home" name="javadoc-browse" unless="no.javadoc.preview">
-        <nbbrowse file="${dist.javadoc.dir}/index.html"/>
-    </target>
-    <target depends="init,javadoc-build,javadoc-browse" description="Build Javadoc." name="javadoc"/>
+               <target depends="init,compile" description="Build Javadoc." name="javadoc">
+                <delete dir="${dist.javadoc.dir}" />
+                <mkdir dir="${dist.javadoc.dir}" />
+                <javadoc destdir="${dist.javadoc.dir}" encoding="UTF-8" docencoding="UTF-8">
+                        <fileset dir="${src.dir}">
+                                <include name="**/*.java"/>
+                        </fileset>
+                </javadoc>
+            </target>
+
     <!--
                 
                 TEST COMPILATION SECTION

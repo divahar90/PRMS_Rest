@@ -6,31 +6,31 @@
 package sg.edu.nus.iss.phoenix.schedule.entity;
 
 /**
+ * This class contains all methods to do operations with Annual schedule
  *
  * @author Divahar Sethuraman
- * This class contains all methods to do operations with Annual schedule
+ *
  */
-
 public class AnnualSchedule {
-    
-    private int year;
-    private String assignedBy;
 
+    private int year;
+
+    /**
+     * Getter for Year
+     *
+     * @return
+     */
     public int getYear() {
         return year;
     }
 
+    /**
+     * Setter for year
+     *
+     * @param year
+     */
     public void setYear(int year) {
         this.year = year;
     }
 
-    public String getAssignedBy() {
-        return assignedBy;
-    }
-
-    public void setAssignedBy(String assignedBy) {
-        this.assignedBy = assignedBy;
-    }
-    
-    
 }

@@ -8,7 +8,8 @@ package sg.edu.nus.iss.phoenix.core.common;
 import java.util.HashMap;
 
 /**
- *
+ * This class contains the common constants for PRMS
+ * 
  * @author Divahar Sethuraman
  */
 public class PRMSConstants {

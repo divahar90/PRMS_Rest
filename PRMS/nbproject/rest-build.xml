@@ -31,5 +31,5 @@
     </target>
     <target name="browse-url" if="do.browse-url">
         <nbbrowse url="${restbeans.test.url}"/>
-    </target>
+    </target>	
 </project>

@@ -5,25 +5,44 @@
 package sg.edu.nus.iss.phoenix.core.dao;
 
 import sg.edu.nus.iss.phoenix.authenticate.dao.RoleDao;
-import sg.edu.nus.iss.phoenix.authenticate.dao.UserDao;
 import sg.edu.nus.iss.phoenix.radioprogram.dao.ProgramDAO;
 import sg.edu.nus.iss.phoenix.schedule.dao.ScheduleDAO;
+import sg.edu.nus.iss.phoenix.user.dao.UserDao;
 
 
 
 /**
- *
- * @author projects
+ * This interface contains all the DAO references of PRMS
+ *  
+ * @author User
  */
 public interface DAOFactory {
 
-	ProgramDAO getProgramDAO();
+    /**
+     *
+     * @return
+     */
+    ProgramDAO getProgramDAO();
 
-	RoleDao getRoleDAO();
+    /**
+     *
+     * @return
+     */
+    
+    RoleDao getRoleDAO();
 
-	UserDao getUserDAO();
+    /**
+     *
+     * @return
+     */
+    UserDao getUserDAO();
         
         // Added for Schedule - By Diva
+
+    /**
+     *
+     * @return
+     */
         ScheduleDAO getScheduleDAO();
 	
 }

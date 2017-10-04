@@ -9,19 +9,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
-import sg.edu.nus.iss.phoenix.authenticate.entity.User;
+import sg.edu.nus.iss.phoenix.user.entity.User;
 
 /**
- *
- * @author Divahar Sethuraman 
  * This class contains the helper methods for user
+ * 
+ * @author Divahar Sethuraman 
+ * 
  */
 public class UserHelper {
 
     /**
      *
-     * @param userMap
-     * @param roleMap
+     * @param userMap User Map with user id and User object
+     * @param roleMap Role Map with user Id and List of roles
      * @return
      */
     public static List<User>

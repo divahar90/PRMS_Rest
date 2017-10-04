@@ -1,4 +1,4 @@
-package sg.edu.nus.iss.phoenix.authenticate.RESTful;
+package sg.edu.nus.iss.phoenix.user.RESTful;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -20,17 +20,15 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 import org.json.JSONObject;
-import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
-import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.authenticate.service.RoleService;
-import sg.edu.nus.iss.phoenix.authenticate.service.UserService;
 import sg.edu.nus.iss.phoenix.schedule.service.ScheduleService;
+import sg.edu.nus.iss.phoenix.user.entity.User;
+import sg.edu.nus.iss.phoenix.user.service.UserService;
 
 /**
+ * This class has all the methods/operations related to User
  *
- * @author Divahar Sethuraman 
- * This class has all the methods/operations related
- * to User
+ * @author Divahar Sethuraman
  *
  */
 @Path("user")
@@ -57,7 +55,7 @@ public class UserRESTService {
 
     /**
      *
-     * @param user
+     * @param user User obect
      * @return
      * @throws ParseException
      */
@@ -70,21 +68,8 @@ public class UserRESTService {
         JSONObject obj = new JSONObject();
         try {
             isCreate = userService.processCreate(user);
-            System.out.println("isCreate: " + isCreate);
+
             if (isCreate) {
-                if (null != user && null != user.getRoles()
-                        && user.getRoles().size() > 0) {
-                    for (Role role : user.getRoles()) {
-                        boolean isRoleCreated = roleService.
-                                processCreate(role, user.getId());
-                        if (!isRoleCreated) {
-                            isCreate = false;
-                            obj.put("status", isCreate);
-                            obj.put("message", "Role cannot be created for the user");
-                            return obj.toString();                      
-                        }
-                    }
-                }
                 obj.put("status", isCreate);
                 obj.put("message", "User created successfully");
             } else {
@@ -100,16 +85,15 @@ public class UserRESTService {
     /**
      * GET method for retrieving program slots
      *
-     * @param user
-     * @param role
-     * @return
-     * @throws java.text.ParseException
+     * @param user user id
+     * @param role role id
+     * @return list of users
      */
     @GET
     @Path("/retrieve")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Users retrieveUsers(@QueryParam("user") String user, @QueryParam("role") String role)
-            throws ParseException {
+    public Users retrieveUsers(@QueryParam("user") String user,
+            @QueryParam("role") String role) {
 
         Users users = new Users();
         try {
@@ -127,8 +111,8 @@ public class UserRESTService {
     /**
      * POST method for updating a program slot
      *
-     * @param user
-     * @return
+     * @param user user object
+     * @return String
      * @throws java.text.ParseException
      */
     @POST
@@ -141,17 +125,8 @@ public class UserRESTService {
         try {
             isUpdate
                     = userService.processUpdate(user);
-            if (isUpdate
-                    && null != user.getRoles() && user.getRoles().size() > 0) {
-                boolean isDeleted
-                        = roleService.processDelete(user.getId());
-                if (isDeleted) {
-                    for (Role role : user.getRoles()) {
-                        boolean isRoleCreated = roleService.
-                                processCreate(role, user.getId());
-                    }
-                }
 
+            if (isUpdate) {
                 obj.put("status", isUpdate);
                 obj.put("message", "User updated successfully");
 
@@ -169,8 +144,8 @@ public class UserRESTService {
     /**
      * DELETE method for deleting an instance of resource
      *
-     * @param userId
-     * @return
+     * @param userId User ID
+     * @return String
      */
     @DELETE
     @Path("/delete/{userId}")

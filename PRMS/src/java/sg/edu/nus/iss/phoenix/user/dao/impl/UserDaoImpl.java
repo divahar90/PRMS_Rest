@@ -1,12 +1,10 @@
-package sg.edu.nus.iss.phoenix.authenticate.dao.impl;
+package sg.edu.nus.iss.phoenix.user.dao.impl;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,16 +12,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sg.edu.nus.iss.phoenix.authenticate.dao.UserDao;
 import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
-import sg.edu.nus.iss.phoenix.authenticate.entity.User;
 import sg.edu.nus.iss.phoenix.core.common.PRMSConstants;
 import sg.edu.nus.iss.phoenix.core.dao.DBConstants;
 import sg.edu.nus.iss.phoenix.core.helper.UserHelper;
+import sg.edu.nus.iss.phoenix.user.dao.UserDao;
+import sg.edu.nus.iss.phoenix.user.entity.User;
 
 /**
- * @author Divahar Sethuraman This class contains all database handling that is
- * needed to permanently store and retrieve User object instances.
+ * This class contains all database handling that is needed to permanently store
+ * and retrieve User object instances.
+ *
+ * @author Divahar Sethuraman
  */
 public class UserDaoImpl implements UserDao {
 
@@ -42,7 +42,7 @@ public class UserDaoImpl implements UserDao {
      */
     /**
      *
-     * @param valueObject
+     * @param valueObject user object
      * @return
      * @throws SQLException
      */
@@ -89,8 +89,8 @@ public class UserDaoImpl implements UserDao {
 
     /**
      *
-     * @param user
-     * @param role
+     * @param user user id
+     * @param role role
      * @return
      * @throws SQLException
      */
@@ -140,8 +140,8 @@ public class UserDaoImpl implements UserDao {
 
     /**
      *
-     * @param user
-     * @return
+     * @param user user object
+     * @return boolean
      * @throws SQLException
      */
     @Override
@@ -188,8 +188,8 @@ public class UserDaoImpl implements UserDao {
 
     /**
      *
-     * @param userId
-     * @return
+     * @param userId user Id
+     * @return booelan
      * @throws SQLException
      */
     @Override
@@ -225,6 +225,13 @@ public class UserDaoImpl implements UserDao {
         return isDeleted;
     }
 
+    /**
+     *
+     * @param userId User Id    
+     * @param password password of user
+     * @return User
+     * @throws SQLException
+     */
     @Override
     public synchronized User validateUser(String userId,
             String password)
@@ -264,8 +271,8 @@ public class UserDaoImpl implements UserDao {
 
     /**
      *
-     * @param stmt
-     * @return
+     * @param stmt Prepared statement for query
+     * @return List of user
      * @throws SQLException
      */
     protected List<User> listQuery(PreparedStatement stmt) throws SQLException {
@@ -345,6 +352,12 @@ public class UserDaoImpl implements UserDao {
         return userList;
     }
 
+    /**
+     *
+     * @param idList List of user id
+     * @return Map of user id and name
+     * @throws SQLException
+     */
     @Override
     public Map<String, String>
             getNames(String idList) throws SQLException {

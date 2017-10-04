@@ -57,7 +57,6 @@ public class ProgramRESTService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public RadioProgram getRadioProgram() {
-        //TODO return proper representation object
         throw new UnsupportedOperationException();
     }
 
@@ -91,8 +90,13 @@ public class ProgramRESTService {
     @POST
     @Path("/update")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void updateRadioProgram(RadioProgram rp) {
+    public String updateRadioProgram(RadioProgram rp) {
+        JSONObject obj = new JSONObject();
         service.processModify(rp);
+        obj.put("status", true);
+        obj.put("message", "Radio Program updated successfully");
+        return obj.toString();
+
     }
 
     /**
@@ -103,22 +107,26 @@ public class ProgramRESTService {
     @PUT
     @Path("/create")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void createRadioProgram(RadioProgram rp) {
+    public String createRadioProgram(RadioProgram rp) {
+        JSONObject obj = new JSONObject();
         System.out.println(rp.getTypicalDuration());
         System.out.println(rp.toString());
         service.processCreate(rp);
+        obj.put("status", true);
+        obj.put("message", "Radio Program created successfully");
+        return obj.toString();
     }
 
     /**
      * DELETE method for deleting an instance of resource
      *
-     * @param name name of the resource
+     * @param name name of radio program
      * @return
      */
     @DELETE
     @Path("/delete/{rpname}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean deleteRadioProgram(@PathParam("rpname") String name) {
+    public String deleteRadioProgram(@PathParam("rpname") String name) {
         String name2 = null;
         JSONObject obj = new JSONObject();
         boolean isDel = false;
@@ -142,10 +150,9 @@ public class ProgramRESTService {
             obj.put("message", "Program deleted Successfully");
         } else {
             obj.put("status", isDel);
-            obj.put("message", "Program has assigned slots in future. Please delete those and proceeds");
+            obj.put("message", "Program has assigned slots in future. Please delete those and proceed");
         }
 
-        System.out.println("isDel: " + isDel);
-        return isDel;
+        return obj.toString();
     }
 }

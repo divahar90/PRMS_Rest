@@ -5,17 +5,19 @@ package sg.edu.nus.iss.phoenix.authenticate.service;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 import java.sql.SQLException;
 import java.util.List;
 import sg.edu.nus.iss.phoenix.authenticate.dao.RoleDao;
 import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
 import sg.edu.nus.iss.phoenix.core.dao.DAOFactoryImpl;
 
+
 /**
- *
+ *This class is used to handle the operations related to user role
+ * 
  * @author Divahar Sethuraman 
- * This class is used to handle the operations
- * related to user role
+ * 
  */
 public class RoleService {
 
@@ -32,8 +34,8 @@ public class RoleService {
 
     /**
      *
-     * @param role
-     * @param id
+     * @param role Role Object
+     * @param id User ID
      * @return
      */
     public boolean processCreate(Role role, String id) {

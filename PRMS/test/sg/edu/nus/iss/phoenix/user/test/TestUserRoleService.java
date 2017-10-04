@@ -13,17 +13,19 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
-import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
-import sg.edu.nus.iss.phoenix.authenticate.entity.User;
-import sg.edu.nus.iss.phoenix.authenticate.service.RoleService;
-import sg.edu.nus.iss.phoenix.authenticate.service.UserService;
 import static org.hamcrest.MatcherAssert.assertThat;
+import sg.edu.nus.iss.phoenix.authenticate.entity.Role;
+import sg.edu.nus.iss.phoenix.authenticate.service.RoleService;
+import sg.edu.nus.iss.phoenix.user.entity.User;
+import sg.edu.nus.iss.phoenix.user.service.UserService;
 
 /**
- *
+ * 
+ * This is a test class to check all the service methods of Schedule
+ * 
  * @author Divahar Sethuraman
- *
  */
+
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestUserRoleService {
 
@@ -34,16 +36,22 @@ public class TestUserRoleService {
     static User user = null;
     static Role role = null;
 
+    /**
+     *
+     */
     @BeforeClass
     public static void setUp() {
         userService
                 = new UserService();
-        roleService = 
-                new RoleService();
+        roleService
+                = new RoleService();
         user = new User();
         role = new Role();
     }
 
+    /**
+     *
+     */
     @AfterClass
     public static void tearDown() {
         userService = null;
@@ -52,6 +60,9 @@ public class TestUserRoleService {
         role = null;
     }
 
+    /**
+     *
+     */
     @Test
     public void method1_create() {
 
@@ -64,6 +75,9 @@ public class TestUserRoleService {
 
     }
 
+    /**
+     *
+     */
     @Test
     public void method2_create() {
 
@@ -76,6 +90,9 @@ public class TestUserRoleService {
 
     }
 
+    /**
+     *
+     */
     @Test
     public void method3_retrieve() {
 
@@ -89,6 +106,9 @@ public class TestUserRoleService {
 
     }
 
+    /**
+     *
+     */
     @Test
     public void method4_retrieve() {
 
@@ -111,10 +131,13 @@ public class TestUserRoleService {
         assertThat(user.getAddress(), equalTo("SG 120715"));
         assertThat(user.getContact(), equalTo("90857452"));
         assertThat(user.getName(), equalTo("Divahar S"));
-        assertThat(user.getPassword(), equalTo("123456"));        
+        assertThat(user.getPassword(), equalTo("123456"));
 
     }
 
+    /**
+     *
+     */
     @Test
     public void method5_update() {
 
@@ -128,6 +151,9 @@ public class TestUserRoleService {
 
     }
 
+    /**
+     *
+     */
     @Test
     public void method7_delete() {
 
@@ -138,6 +164,9 @@ public class TestUserRoleService {
 
     }
 
+    /**
+     *
+     */
     @Test
     public void method8_delete() {
 

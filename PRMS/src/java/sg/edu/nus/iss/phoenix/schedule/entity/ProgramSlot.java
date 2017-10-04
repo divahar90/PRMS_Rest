@@ -10,9 +10,9 @@ import java.sql.Date;
 import java.sql.Time;
 
 /**
- *
- * @author Divahar Sethuraman
  * This class contains all methods to do operations with program-slot table
+ * @author Divahar Sethuraman
+ * 
  */
 
 public class ProgramSlot implements Cloneable, Serializable{
@@ -25,18 +25,38 @@ public class ProgramSlot implements Cloneable, Serializable{
     private String presenterId;
     private String producerId;
 
+    /**
+     * Getter for duration
+     * 
+     * @return
+     */
     public Time getDuration() {
         return duration;
     }
 
+    /**
+     * Setter for duration
+     * 
+     * @param duration
+     */
     public void setDuration(Time duration) {
         this.duration = duration;
     }
 
+    /**
+     * Getter for start time
+     * 
+     * @return
+     */
     public Time getStartTime() {
         return startTime;
     }
 
+    /**
+     * Setter for start time
+     * 
+     * @param startTime
+     */
     public void setStartTime(Time startTime) {
         this.startTime = startTime;
     }
